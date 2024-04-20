@@ -253,3 +253,45 @@
                 -"php bin/console make:auth"
                     -select "0",
                     -nom de l'api "ApiTokenAuthenticator"
+
+# Documenter son API
+
+    -Installation de NelmioApiDocBundle
+        -"composer require nelmio/api-doc-bundle"
+            -Lors de l’installation, Symfony Flex vous proposera d’exécuter une recette propre au bundle,
+                vous pourrez donc écrire
+                    « yes »
+                et appuyer sur entrée pour valider la recipe.
+            -Après l'installation decommenter la seconde partie du code, dans le
+                "config/routes/nelmio_api_doc.yaml" qui donne:
+                    -(
+                        # Expose your documentation as JSON swagger compliant
+                        app.swagger:
+                            path: /api/doc.json
+                            methods: GET
+                            defaults: { _controller: nelmio_api_doc.controller.swagger }
+
+                        ## Requires the Asset component and the Twig bundle
+                        ## $ composer require twig asset
+                        app.swagger_ui:
+                            path: /api/doc
+                            methods: GET
+                            defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+                    )
+    -Installation de twig asset afin que Nelmio puisse afficher des rendus HTML
+        -"composer require twig asset"
+            -N’oublions pas, nous avions protégé toutes nos routes via la sécurité Symfony
+                depuis le fichier « config/packages/security.yaml ». Il nous faut donc spécifier
+                à notre firewall de ne pas protéger la route de la documentation pour pouvoir y accéder
+                en public et par conséquent ajouter un « access_control » de cette URL :
+                (
+                    # config/packages/security.yaml
+                    security:
+                        // […]
+                        access_control :
+                            - { path : ^/api/registration, roles : PUBLIC_ACCESS }
+                            - { path : ^/api/login, roles : PUBLIC_ACCESS }
+                            - { path : ^/api/doc, roles : PUBLIC_ACCESS }
+                            - { path : ^/api, roles : ROLE_USER }
+                )
+        -Ensuite accéder à la documentation via l'url:"http://127.0.0.1:8000/api/doc"
