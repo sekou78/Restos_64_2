@@ -127,3 +127,41 @@
             des verboses HTTP (GET, POST, PUT, DELETE) en accord avec notre CRUD.
             -Mise en place des CRUD et configuration
             -Ensuite teste du CRUD avec Postman.
+
+# Mise en place des composants d’accès aux données
+
+    -Sérialiser et désérialiser avec Symfony
+    -Installation du composant sérialiser de Symfony:
+        -"composer require symfony/serializer-pacK",
+            si c'est déjà installer cela ne change rien ou le mettra à jour.
+    -Nous reprenons notre CRUD restaurant créé, nous pouvons remplacer l’ancienne méthode « new »
+        par la nouvelle utilisant « Serializer »
+        -Après importation des librairies "serializerInterface"et "UrlGeneratorInterface",
+        -Une fois la serialization en place nous testons notre CRUD avec Postman.
+    -Maintenant que nous permettons à notre API de diffuser des données, il se peut que
+        des clients (web, mobile, etc…) effectuent des requêtes HTTP sur notre serveur.
+        -Si vous réalisez un test hors Postman avec un réel client, Symfony refusera probablement
+            de vous donner accès aux données. C'est ce que l'on appelle la sécurité CORS (cross-origin resource sharing),
+            une politique de sécurité permettant à un client d'accéder à un autre domaine que le sien.
+        -Tout simplement, nous devons permettre à notre API via CORS d’autoriser les requêtes HTTP provenant
+            d’origines différentes que celle où tourne notre serveur.
+        -Et pour cela Nelmio (la même organisation qui nous permettra de documenter notre API)
+            a créé un bundle : « NelmioCorsBundle ».
+        -Pour l’installer et permettre de requêter sur votre API, utilisez la commande suivante :
+            -"composer require nelmio/cors-bundle"
+        -Symfony Flex vous mettra automatiquement en place la configuration nécessaire, mais surtout
+             vous créera un fichier « config/packages/nelmio_cors.yaml » qui doit être édité par cette configuration :
+             -(
+                nelmio_cors:
+                    defaults:
+                        origin_regex: true
+                        allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
+                    allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+                    allow_headers: ['Content-Type', 'Authorization', 'X-AUTH-TOKEN']
+                    expose_headers: ['Link']
+                    max_age: 3600
+                    paths:
+                        '^/': null
+             )
+        -Voila, votre API peut réellement être utilisée par n’importe quel client sur internet,
+            notamment lorsque l’on mettra celle-ci en ligne !
