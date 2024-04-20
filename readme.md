@@ -210,3 +210,46 @@
         -Creation du systeme d'inscription
             -On peut créer notre controller qui recevra cette nouvelle route via:
                 -"php bin/console make:controller SecurityController"
+        -Création du système d'authentification
+            -Nous allons donc créer une route de login dans notre controller « SecurityController.php »
+            -Et modifier en rajoutant sur le fichier de configuration « security.yaml » :
+                (
+                    # config/packages/security.yaml
+                    security:
+                        # ...
+                        firewalls:
+                            main:
+                                # ...
+                            stateless: true
+                            json_login:
+                                    # api_login is a route we will create below
+                                    check_path: app_api_login
+                )
+            -Ensuite on fait le teste sur Postman avec "username" et "password".
+        -Les autorisations:
+            -Sécuriser et bloquer les accès aux utilisateurs non connectés,
+            -Nous allons donc :
+                -Autoriser publiquement l’accès aux routes de connexion et d’inscription
+                    (pour qu’un utilisateur non authentifié puisse quand même créer un compte ou se loger).
+                -Bloquer les accès à toutes les autres routes dont les URL commencent par « /api ».
+                -Pour cela, vous pouvez modifier la propriété « access_control » :
+                    (
+                        # config/packages/security.yaml
+                        security:
+                            # ...
+                            firewalls:
+                                # ...
+                                main:
+                                    # ...
+                            access_control:
+                                - { path: ^/api/registration, roles : PUBLIC_ACCESS }
+                                - { path: ^/api/login, roles: PUBLIC_ACCESS }
+                                - { path: ^/api, roles : ROLE_USER }
+                    )
+                -Désormais, si vous souhaitez requêter avec Postman sur une route de l’API non publique
+                    (comme « /api/restaurant en POST pour poster un nouveau restaurant »), vous serez
+                    bloqué avec un code de retour 401 Unauthorized.
+            -Création de l'ApiTokenAuthenticator:
+                -"php bin/console make:auth"
+                    -select "0",
+                    -nom de l'api "ApiTokenAuthenticator"
