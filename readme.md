@@ -438,3 +438,107 @@
                     ajoutons nous-mêmes une fausse méthode retournant un résultat fixe, permettant
                     à « BankAccountService » de fonctionner normalement en appelant sa « fausse »
                     dépendance de devise.
+
+# Remplir sa base de données avec les DataFixtures
+
+    -Installation de DoctrineFixturesBundle
+        -DoctrineFixturesBundle est un bundle développé par Doctrine permettant de générer de la donnée en base.
+        -Si vous êtes minimum en Symfony 4, vous pouvez exécuter la commande suivante
+            dans votre projet afin de l’installer :
+                -"composer require --dev orm-fixtures"
+        -Cet alias de Symfony Flex installera et configurera le composant au sein de votre projet.
+        -Il ajoutera également le bundle dans votre fichier de configuration,
+            le fichier « config/bundles.php » de votre projet.
+    -La création de notre première fixture
+        -une commande CLI liée aux fixtures est disponible en tapant :
+            -"php bin/console list"
+        -la commande suivante permette de populer vos fausses données dans votre base :
+            -"php bin/console doctrine:fixtures:load"
+        -deux choix s’offrent pour créer notre fixture :
+            1. Vous pouvez utiliser le maker de Symfony qui créera une classe
+                de Fixtures à remplir (tout comme l’exemple AppFixtures) via :
+                    -"php bin/console make:fixtures"
+            2. Ou la créer par vous-même, en ajoutant une nouvelle classe PHP dans votre
+                dossier « src/Datafixtures ».
+                    -Cette classe devra :
+                        -Se terminer par le suffixe « Fixtures »,
+                        -Hériter de la classe mère Fixture « use Doctrine\Bundle\FixturesBundle\Fixture; »,
+                        -Implémenter obligatoirement la fonction publique « load(ObjectManager $manager) »
+                            imposée par l’interface « FixtureInterface » présente dans notre classe mère
+                            « Fixture ».
+                        -Sans celle-ci la commande qui appellera vos Fixtures ne pourra charger vos données en base.
+                        -Le corps d’une Fixture ressemblera donc à la classe d’exemple :
+                            -(
+                                // src/DataFixtures/AppFixtures.php
+                                namespace App\DataFixtures;
+                                use Doctrine\Bundle\FixturesBundle\Fixture;
+                                use Doctrine\Persistence\ObjectManager;
+                                class AppFixtures extends Fixture
+                                {
+                                    public function load(ObjectManager $manager)
+                                    {
+                                        // $product = new Product();
+                                        // $manager->persist($product);
+                                        $manager->flush();
+                                    }
+                                }
+                            )
+        -Si nous reprenons nos entités précédemment créées, nous pouvons et DEVONS
+            remplir en premier lieu des entités comme « User », « Restaurant », « Picture », etc.
+        -Pour commencer, nous allons remplir l’entité « User » ayant besoin de celle-ci pour
+            se connecter rapidement sur notre site.
+        -D’autant plus que c’est une entité simple n’ayant aucune relation avec d’autres entités pour le moment.
+        -Pour cela, nous allons créer une classe « UserFixtures » avec le code suivant :
+            -(
+                <?php
+                namespace App\DataFixtures;
+                use App\Entity\User;
+                use DateTimeImmutable;
+                use Doctrine\Bundle\FixturesBundle\Fixture;
+                use Doctrine\Persistence\ObjectManager;
+                use Exception;
+                use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+                class UserFixtures extends Fixture
+                {
+                    public function __construct(private UserPasswordHasherInterface $passwordHasher)
+                    {
+                    }
+                    /** @throws Exception */
+                    public function load(ObjectManager $manager): void
+                    {
+                        for ($i = 1; $i <= 20; $i++) {
+                            $user = (new User())
+                                ->setFirstName("Firstname $i")
+                                ->setLastName("Lastname $i")
+                                ->setGuestNumber(random_int(0,5))
+                                ->setEmail("email.$i@studi.fr")
+                                ->setCreatedAt(new DateTimeImmutable());
+                            $user->setPassword($this->passwordHasher->hashPassword($user, 'password' . $i));
+                            $manager->persist($user);
+                        }
+                        $manager->flush();
+                    }
+                }
+            )
+        -Si nous résumons le code écrit :
+        -La classe « UserFixtures » hérite de la classe mère « Fixture ».
+        -Nous ajoutons un constructeur afin d’injecter la dépendance permettant d’hasher et
+            de crypter le mot de passe de nos utilisateurs dans la méthode « ->load() ».
+        -Nous déclarons la fonction « ->load() » qui sera appelée par la commande:
+            -"php bin/console doctrine:fixtures:load"
+        -Cette fonction prend en paramètre un objet de type « ObjectManager » qui nous permettra
+            de persister et de flusher nos objets en base à la fin de la fonction.
+        -Nous bouclons plusieurs fois afin de créer des objets « User » à répétition avec
+            leurs attributs settés (prénom X, nom X, un chiffre aléatoire d’invités, un email,
+            une date de création) puis les persistons pour les flusher en base de données à la sortie de la boucle.
+        -À l’issue, il nous suffit d’exécuter la commande suivante pour jouer cette fixture :
+            -"php bin/console doctrine:fixtures:load"
+        -Dès lors, vous pouvez constater dans votre base de données et notamment votre table User,
+            qu’une nouvelle ligne de données (tuple) a été ajoutée.
+        -Vous pouvez à tout moment la supprimer ou enrichir en plus celle-ci via l’option append.
+        -Il est utile de rappeler qu’en cas de contribution sur votre projet, vos collaborateurs pourront
+            installer votre projet avec des données déjà présentes en base avec les commandes suivantes,
+            qui se résument à : créer la base, jouer les migrations, jouer les fixtures :
+                -"php bin/console d:d:c" (doctrine:database:create)
+                -"php bin/console d:m:m" (doctrine:make:migration)
+                -"php bin/console d:f:l" (doctrine:fixtures:load)
