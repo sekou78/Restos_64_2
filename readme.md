@@ -165,3 +165,48 @@
              )
         -Voila, votre API peut réellement être utilisée par n’importe quel client sur internet,
             notamment lorsque l’on mettra celle-ci en ligne !
+
+# Sécurisation de l’accès aux données
+
+    -L'Authentification
+        -Installation de symfony/security-bundle
+            -"composer require symfony/security-bundle"
+        -Création de l'entité User makerBundle:
+            -"php bin/console make:user"
+            -Et répondre aux questions suivantes :
+                -The name of the security user class (e.g. User) [User]:
+                    -> User
+                -Do you want to store user data in the database (via Doctrine)? (yes/no) [yes]:
+                    -> yes
+                -Enter a property name that will be the unique "display" name for the user (e.g. email, username, uuid) [email]:
+                    -> email
+                -Will this app need to hash/check user passwords? Choose No if passwords are not needed or
+                    will be checked/hashed by some other system (e.g. a single sign-on server).
+                    Does this app need to hash/check user passwords? (yes/no) [yes]:
+                    -> yes
+                created: src/Entity/User.php
+                created: src/Repository/UserRepository.php
+                updated: src/Entity/User.php
+                updated: config/packages/security.yaml
+                -Une fois la classe d’entité « User » créée avec son repository,
+                    -On rentre dans le fichier "entity/User.php" et on rajoute cette paramètre en plus
+                        pour la configuration de l'apiToken:
+                    (
+                        #[ORM\Column(length: 255)]
+                        private ?string $apiToken;
+
+                        /**@throws \Exception */
+                        public function __construct()
+                        {
+                            $this->apiToken = bin2hex(random_bytes(20));
+                        }
+                    )
+                -Il ne nous reste plus qu’à envoyer celle-ci en base de données via les deux commandes :
+                -Ensuite faire la migration de cette nouvelle entité User l'envoyerà la BDD:
+                    -"php bin/console make:migration",
+                    -"php bin/console doctrine:migrations:migrate"
+                -On peut en profiter pour compléter l'entité User pour qu'il correspond a notre cahier des charges
+                    le rajout de la relation.
+        -Creation du systeme d'inscription
+            -On peut créer notre controller qui recevra cette nouvelle route via:
+                -"php bin/console make:controller SecurityController"
