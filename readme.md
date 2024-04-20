@@ -112,3 +112,18 @@
                 -Et voilà ! Vous disposez maintenant d’un tout nouveau controller écrit automatiquement pour vous!
                     celui-ci contient déjà les use et la structure de la classe.
         -Il ne nous reste plus qu’à créer et configurer toutes nos routes d’accès par méthode.
+    -Création de nos routes pour les controlleurs,
+    -Configuration de nos routes:
+        -Lorsque vous déclarez une route, vous avez la possibilité de spécifier plusieurs options comme le type de requête que vous
+             souhaitez traiter, la valeur par défaut à setter s’il manque un paramètre, des prérequis pour vos paramètres de requête,
+             avec la mise en place des CRUD
+                (
+                    -Create (POST),
+                    -Read (GET),
+                    -Update (PUT),
+                    -Delete (DELETE)
+                )
+        -il nous faut spécifier que ces routes respectent les principes RESTful de l’API, c’est-à-dire avoir
+            des verboses HTTP (GET, POST, PUT, DELETE) en accord avec notre CRUD.
+            -Mise en place des CRUD et configuration
+            -Ensuite teste du CRUD avec Postman.
