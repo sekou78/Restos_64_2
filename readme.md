@@ -295,3 +295,46 @@
                             - { path : ^/api, roles : ROLE_USER }
                 )
         -Ensuite accéder à la documentation via l'url:"http://127.0.0.1:8000/api/doc"
+
+# La gestion de la sécurité
+
+    -Création d'un compte via la documentation,
+        -On ouvre le fichier « SecurityController.php » et ajoutez
+            les Attributes au-dessus de notre méthode « register », en oubliant pas d'importer la:
+            "use OpenApi\Annotations as OA;"
+    -Se connecter via la documentation:
+        -Tout comme « app_api_registration », notre requête pour se connecter est de type
+            POST et nécessite des champs obligatoires comme le « username » et le « password »
+            ajoutez les Attributes au-dessus de notre méthode « login »,
+    -Activer le module de Security de NelmioApiDocBundle
+        -Maintenant que nous sommes en mesure de récupérer notre « apiToken », il nous faut
+            garder celui-ci pour l’ensemble des futures requêtes.
+            Pour ce faire, nous avons 2 solutions :
+                -Nous pouvons décrire pour chaque route, qu’il nous faut dans le header de
+                    la requête HTTP le champ « X-AUTH-TOKEN », mais cela serait redondant et
+                    pas pratique en cas de mise à jour, car nous devrons modifier toutes nos routes.
+            -Nous pouvons activer le module de sécurité de Nelmio, permettant d’enregistrer
+                le token dans une session et l’envoyer dans le header de chaque requête.
+            -Nous pouvons modifier le fichier de configuration « config/packages/nelmio_api_doc.yaml »
+                de la sorte :
+                    (
+                        nelmio_api_doc :
+                            documentation :
+                                info :
+                                    title: Restaurant API
+                                    description : Documentation de l'API Restaurant Studi.
+                                    version : 1.0.0
+                                components :
+                                    securitySchemes :
+                                        X-AUTH-TOKEN:
+                                            type : apiKey
+                                            name: X-AUTH-TOKEN
+                                            in: header
+                                security:
+                                    - X-AUTH-TOKEN: [ ]
+                            areas: # to filter documented areas
+                                path_patterns:
+                                    - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+                    )
+    -Documenter notre CRUD
+        -Mise à jour de tout nos controller et leur CRUD
