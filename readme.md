@@ -338,3 +338,103 @@
                     )
     -Documenter notre CRUD
         -Mise à jour de tout nos controller et leur CRUD
+
+# Tester son application web
+
+    -Installation de phpUnit
+        -"composer require --dev symfony/test-pack"
+            -Symfony Flex a également mis à jour vos fichiers liés à Composer, votre « .gitignore »,
+                mais a surtout ajouté le binaire « phpunit » au sein de votre dossier « bin/ »
+                qui vous servira à exécuter vos classes de tests.
+    -Création du fichier ".env.test.local" avec le même environnent que notre fichier ".env.local"
+    -Pour créer notre BDD test "php bin/console doctrine:database:create --env=test"
+    -Pour exécuter un test au sein de votre projet, rien de plus simple !
+        -Il vous suffit d’appeler les suites de scénarios de test que vous avez écrits, via la commande suivante :
+            -"php bin/phpunit"
+                -Aucun test n’a été exécuté et c’est normal,
+    -Création de notre premier test unitaire
+        -Pour écrire un test, il nous faut créer une classe de test
+            -Les classes de test sont suffixées par le mot clé « Test » et se trouvent dans
+                le dossier « tests/ » de votre projet.
+            -Ce dossier doit obligatoirement reproduire la même arborescence que
+                le dossier « src/ » de votre projet.
+            -Si la classe « User.php » est dans le dossier « Entity »,
+                il nous faudra créer ce dossier au préalable.
+            -Créez donc un fichier « UserTest » au sein du répertoire « tests/Entity » :
+                -(
+                    <?php
+                        namespace App\Tests\Entity;
+                        use App\Entity\User;
+                        use PHPUnit\Framework\TestCase;
+                        class UserTest extends TestCase
+                        {
+                        }
+                )
+            -Comme vous pouvez le voir, « UserTest » hérite de la classe « TestCase » fournie par PHPUnit.
+                -C’est elle qui contient toutes les méthodes qui vous permettront de comparer
+                    un résultat souhaité avec un résultat récupéré de votre code.
+                -Il existe aussi la classe mère « WebTestCase » qui vous sera utile plus
+                    tard pour l’écriture des tests fonctionnels.
+                -Maintenant, on peut tester une partie de notre code en créant une
+                    méthode étant préfixée par le mot « test ».
+                -Le nom de la méthode doit être explicite et permettre de comprendre
+                    rapidement ce qui est testé pour faciliter la documentation.
+                -Vérifions ici si un utilisateur récemment créé possède bien une clé d’API
+                    automatiquement généré par le constructeur de la classe « User » :
+                        -(
+                            <?php
+                            namespace App\Tests\Entity;
+                            use App\Entity\User;
+                            use PHPUnit\Framework\TestCase;
+                            class UserTest extends TestCase
+                            {
+                                public function testTheAutomaticApiTokenSettingWhenAnUserIsCreated(): void
+                                {
+                                    $user = new User();
+                                    $this->assertNotNull($user->getApiToken());
+                                }
+                            }
+                        )
+                -Vous pouvez vérifier le résultat de test, en réexécutant la commande suivante :
+                    -"php bin/phpunit"
+    -Les tests fonctionnels
+        -À la différence d’un test unitaire, votre classe de test fonctionnel héritera
+            de « WebTestCase » pour disposer de toutes les méthodes de test du client HTTP.
+        -En test fonctionnel, nous couvrons principalement les services et les controllers créés.
+            -Pour simplifier la tâche, nous vérifierons juste que chacune de nos URLs soit valide
+                et ne retourne pas d’erreur HTTP de type 4.x.x (côté client) ou 5.x.x (côté serveur).
+            -On appelle ça un « SmokeTest ».
+            -Ce sont les tests minimums à implémenter sur son projet pour s’assurer que chacune
+                des routes est fonctionnelle.
+            -En respectant l’arborescence comme pour les tests unitaires, vous pouvez créer
+                la classe « SmokeTest.php » héritant de « WebTestCase » dans le dossier « tests/Controller » :
+                    -(
+                        <?php
+                        namespace App\Tests\Controller;
+                        use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+                        class SmokeTest extends WebTestCase
+                        {
+                            public function testApiDocUrlIsSuccessful(): void
+                            {
+                                $client = self::createClient();
+                                $client->followRedirects(false);
+                                $client->request('GET', '/api/doc');
+                                self::assertResponseIsSuccessful();
+                            }
+                        }
+                    )
+            -Ajout des Mocks,
+                -Les tests précédemment écrits sont des tests simples sans complexité.
+                -Mais il est rare de pouvoir tester unitairement du code sans pouvoir en retirer ses dépendances.
+                -Pour cela, il existe la possibilité de simuler des dépendances via les « Mocks ».
+                -Notion un peu plus avancée dans l’univers du test, les « Mocks » vous permettront
+                    de remplacer les dépendances dans vos constructeurs de controllers ou de services,
+                    comme des repositories, d’autres composants, etc.
+                -Si nous prenons l’exemple d’une classe modifiant les devises d’une monnaie.
+                -Cette classe est injectée à un service « BankAccountService.php ».
+                -Il nous faut donc appeler cette classe de devise sans pour autant
+                    utiliser ses méthodes, car celles-ci ne sont pas testées (mais le seront ailleurs).
+                -Nous créons donc un « Mock », une classe simulée dans laquelle nous y
+                    ajoutons nous-mêmes une fausse méthode retournant un résultat fixe, permettant
+                    à « BankAccountService » de fonctionner normalement en appelant sa « fausse »
+                    dépendance de devise.
