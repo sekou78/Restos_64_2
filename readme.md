@@ -91,3 +91,24 @@
         -php bin/console make:entity Restaurant    // Pour créer une entité Restaurant avec ses attributs
         -php bin/console make:migration    // Pour créer la migration contenant les requêtes SQL de la classe
         -php bin/console doctrine:migrations:migrate    // Pour exécuter les requêtes SQL de la migration
+
+# Mise en place de l'interface utilisateur
+
+    -Création de nos controlleurs:
+        -Veuillez à la bonne installation de se dependance sinon la réinstallée:
+            -"composer require --dev symfony/maker-bundle",
+        -Deux façons crées les controlleurs:
+            -Manuellement:
+                -Pour créer un controller à la main, vous devez tout d’abord créer une classe PHP suffixée par le mot « Controller ».
+                    -Par exemple, si je dois créer un controller d’accès pour mon entité « Restaurant », je peux créer une classe PHP
+                        «RestaurantController » au sein de mon dossier « src/Controller/ ».
+                    -Une fois fait, pensez à bien hériter votre « RestaurantController » de la classe abstraite «AbstractController»,
+                        sans quoi votre classe PHP resterait une classe PHP banale.
+                    -Attention au bon import de cette classe, via le mot clé use et le chemin suivant :
+                        -"use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;"
+            -Automatiquement avec MakerBundle:
+                -Pour créer un controller en ligne de commande, il vous suffit de taper la commande suivante:
+                    -"php bin/console make:controller Restaurant",
+                -Et voilà ! Vous disposez maintenant d’un tout nouveau controller écrit automatiquement pour vous!
+                    celui-ci contient déjà les use et la structure de la classe.
+        -Il ne nous reste plus qu’à créer et configurer toutes nos routes d’accès par méthode.
