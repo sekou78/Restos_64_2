@@ -70,7 +70,24 @@
                 -Ensuite effectuer une migration de l'entité:
                     -"php bin/console make:migration", sui créera un fichier de migration dans le dossier "migrations"
                         qui se trouve à la racine de notre projet,
-                -Enfin envoyerl'entité créer dans notre BDD:
+                -Enfin envoyer l'entité créer dans notre BDD:
                     -"php bin/console doctrine:migrations:migrate", qui enverra l'entité et ses données créer dans la table
                         de la BDD.
         -Nous pouvons ensuite créer nos autres entité avec le même procédé une par une.
+    -Creation et liaison de nos entités:
+        -Relation 1-1, One-To-One
+        -Relation 1-n / n-1, One-To-Many / Many-To-One
+        -Relation n-n / Many-To-Many
+        -Ajouter vos relations ManyToMany entre « Category » et « Food », ainsi que « Menu » et « Category »,
+            ce qui créera les deux tables de jointes.
+        -Pour chaque création de relation entre entité penser à faire la migration:
+            -"php bin/console make:migration", sui créera un autre fichier de migration dans le dossier "migrations"
+                qui se trouve à la racine de notre projet,
+            -Enfin envoyer l'entité et sa relation créer dans notre BDD:
+                -"php bin/console doctrine:migrations:migrate", qui enverra l'entité et ses relation créer dans la table
+                    de la BDD.
+    -ESSENTIEL:
+        -php bin/console doctrine:database:create    // Pour créer une base de données depuis le .env
+        -php bin/console make:entity Restaurant    // Pour créer une entité Restaurant avec ses attributs
+        -php bin/console make:migration    // Pour créer la migration contenant les requêtes SQL de la classe
+        -php bin/console doctrine:migrations:migrate    // Pour exécuter les requêtes SQL de la migration

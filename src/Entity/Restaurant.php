@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RestaurantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -37,6 +39,31 @@ class Restaurant
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    /**
+     * @var Collection<int, Booking>
+     */
+    #[ORM\OneToMany(targetEntity: Booking::class, mappedBy: 'restaurant')]
+    private Collection $bookings;
+
+    /**
+     * @var Collection<int, Picture>
+     */
+    #[ORM\OneToMany(targetEntity: Picture::class, mappedBy: 'restaurant')]
+    private Collection $pictures;
+
+    /**
+     * @var Collection<int, Menu>
+     */
+    #[ORM\OneToMany(targetEntity: Menu::class, mappedBy: 'restaurant')]
+    private Collection $menus;
+
+    public function __construct()
+    {
+        $this->bookings = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
+        $this->menus = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -135,6 +162,96 @@ class Restaurant
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Booking>
+     */
+    public function getBookings(): Collection
+    {
+        return $this->bookings;
+    }
+
+    public function addBooking(Booking $booking): static
+    {
+        if (!$this->bookings->contains($booking)) {
+            $this->bookings->add($booking);
+            $booking->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBooking(Booking $booking): static
+    {
+        if ($this->bookings->removeElement($booking)) {
+            // set the owning side to null (unless already changed)
+            if ($booking->getRestaurant() === $this) {
+                $booking->setRestaurant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Picture>
+     */
+    public function getPictures(): Collection
+    {
+        return $this->pictures;
+    }
+
+    public function addPicture(Picture $picture): static
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures->add($picture);
+            $picture->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Picture $picture): static
+    {
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getRestaurant() === $this) {
+                $picture->setRestaurant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Menu>
+     */
+    public function getMenus(): Collection
+    {
+        return $this->menus;
+    }
+
+    public function addMenu(Menu $menu): static
+    {
+        if (!$this->menus->contains($menu)) {
+            $this->menus->add($menu);
+            $menu->setRestaurant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMenu(Menu $menu): static
+    {
+        if ($this->menus->removeElement($menu)) {
+            // set the owning side to null (unless already changed)
+            if ($menu->getRestaurant() === $this) {
+                $menu->setRestaurant(null);
+            }
+        }
 
         return $this;
     }

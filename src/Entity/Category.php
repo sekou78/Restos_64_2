@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,24 @@ class Category
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    /**
+     * @var Collection<int, Menu>
+     */
+    #[ORM\ManyToMany(targetEntity: Menu::class, mappedBy: 'menu_category')]
+    private Collection $menus;
+
+    /**
+     * @var Collection<int, Food>
+     */
+    #[ORM\ManyToMany(targetEntity: Food::class, mappedBy: 'food_category')]
+    private Collection $food;
+
+    public function __construct()
+    {
+        $this->menus = new ArrayCollection();
+        $this->food = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +95,60 @@ class Category
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Menu>
+     */
+    public function getMenus(): Collection
+    {
+        return $this->menus;
+    }
+
+    public function addMenu(Menu $menu): static
+    {
+        if (!$this->menus->contains($menu)) {
+            $this->menus->add($menu);
+            $menu->addMenuCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMenu(Menu $menu): static
+    {
+        if ($this->menus->removeElement($menu)) {
+            $menu->removeMenuCategory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Food>
+     */
+    public function getFood(): Collection
+    {
+        return $this->food;
+    }
+
+    public function addFood(Food $food): static
+    {
+        if (!$this->food->contains($food)) {
+            $this->food->add($food);
+            $food->addFoodCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFood(Food $food): static
+    {
+        if ($this->food->removeElement($food)) {
+            $food->removeFoodCategory($this);
+        }
 
         return $this;
     }
