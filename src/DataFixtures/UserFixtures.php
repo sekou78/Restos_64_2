@@ -18,7 +18,7 @@ class UserFixtures extends Fixture
     /** @throws Exception */
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $user = (new User())
                 ->setFirstName("Firstname $i")
                 ->setLastName("Lastname $i")

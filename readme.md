@@ -542,3 +542,14 @@
                 -"php bin/console d:d:c" (doctrine:database:create)
                 -"php bin/console d:m:m" (doctrine:make:migration)
                 -"php bin/console d:f:l" (doctrine:fixtures:load)
+
+# Créer des fixtures avancées Travailler avec des fixtures partagées
+
+    -Il faut bien parametrer les fixtures dans le bon ordre exemple de creation des fixtures entre le Restaurant
+        et Picture, le bon ordre est la creation du Restaurant puis de Picture car sans le Restaurant, Picture
+        n'existera pas
+    -Une fois le parametrage bien preciser on peut vider la BDD et la réécrire:
+        --"php bin/console d:d:d --force" (doctrine:database:drop) (Suppreseion de la BDD)
+        -"php bin/console d:d:c" (doctrine:database:create) (Création de la BDD)
+        -"php bin/console d:m:m" (doctrine:make:migration) (Migration de la BDD)
+        -"php bin/console d:f:l" (doctrine:fixtures:load) (Fixtures et chargement en BDD)
