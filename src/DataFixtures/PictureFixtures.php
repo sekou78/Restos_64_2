@@ -3,7 +3,6 @@
 namespace App\DataFixtures;
 
 use App\Entity\Restaurant;
-use App\Service\Utils;
 use App\Entity\Picture;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -19,7 +18,8 @@ class PictureFixtures extends Fixture implements DependentFixtureInterface
         for ($i = 1; $i <= 20; $i++) {
             
             /** @var Restaurant $restaurant */
-            $restaurant = $this->getReference("restaurant" . random_int(1,20));
+            // $restaurant = $this->getReference("restaurant" . random_int(1,20));
+            $restaurant = $this->getReference(RestaurantFixtures::RESTAURANT_REFERENCE . random_int(1,20));
             $title= "Article n°$i";
             
             $picture = (new Picture())
@@ -36,7 +36,7 @@ class PictureFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
         
     }
-    
+
     public function getDependencies(): array
     {
         return [RestaurantFixtures::class];

@@ -553,3 +553,10 @@
         -"php bin/console d:d:c" (doctrine:database:create) (Création de la BDD)
         -"php bin/console d:m:m" (doctrine:make:migration) (Migration de la BDD)
         -"php bin/console d:f:l" (doctrine:fixtures:load) (Fixtures et chargement en BDD)
+    -Les bonnes pratiques du codage de nos fixtures en faisant des regroupements
+        -Apres le regroupement (voir la documentation de symfony sur le "Fixture Groups: Only Executing Some Fixtures")
+        -la commande pour lancer par groupe: "php bin/console doctrine:fixtures:load --group=group1"
+    -Installer Faker:
+        -Pour installer ce composant :
+            -"composer require fakerphp/faker"
+            -Puis le parametrage avec Faker
