@@ -18,12 +18,13 @@ class RestaurantFixtures extends Fixture
     /** @throws Exception */
     public function load(ObjectManager $manager): void
     {
-        $faker = Faker\Factory::create();
+        // $faker = Faker\Factory::create();
+        $faker = Faker\Factory::create('fr_FR');
 
         for ($i = 1; $i <= self::RESTAURANT_NB_TUPLES; $i++) {
             $restaurant = (new Restaurant())
                 ->setName($faker->company())
-                ->setDescription($faker->text(5))
+                ->setDescription($faker->text(50))
                 ->setAmOpeningTime([])
                 ->setPmOpeningTime([])
                 ->setMaxGuest(random_int(10,50))

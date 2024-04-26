@@ -29,7 +29,7 @@ class UserFixtures extends Fixture implements FixtureGroupInterface
                 // ->setFirstName("Firstname $i")
                 ->setFirstName($faker-> firstName())
                 // ->setLastName("Lastname $i")
-                ->setLastName($faker-> lastName(5))
+                ->setLastName($faker-> lastName())
                 ->setGuestNumber(random_int(0,10))
                 // ->setEmail("email.$i@studi.fr")
                 ->setEmail($faker-> email(5))
