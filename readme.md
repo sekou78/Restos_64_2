@@ -560,3 +560,5 @@
         -Pour installer ce composant :
             -"composer require fakerphp/faker"
             -Puis le parametrage avec Faker
+
+# Mettre en ligne l'application web
