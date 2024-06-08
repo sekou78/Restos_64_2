@@ -260,7 +260,7 @@ class SecurityController extends AbstractController
     //     return new JsonResponse(null, Response::HTTP_NOT_FOUND);
 
     // }
-    // #[Route('/account/me', name: 'me', methods: 'GET')]
+    // #[Route('api/account/me', name: 'me', methods: 'GET')]
     // #[OA\Get(
     //     path: "/api/account/me",
     //     summary: "Récupérer toutes les informations de l'objet User",
