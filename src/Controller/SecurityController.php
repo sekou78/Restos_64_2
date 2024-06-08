@@ -260,4 +260,90 @@ class SecurityController extends AbstractController
     //     return new JsonResponse(null, Response::HTTP_NOT_FOUND);
 
     // }
+    // #[Route('/account/me', name: 'me', methods: 'GET')]
+    // #[OA\Get(
+    //     path: "/api/account/me",
+    //     summary: "Récupérer toutes les informations de l'objet User",
+    //     requestBody: new OA\RequestBody(
+    //         required: true,
+    //         description: "Donnée de User pour voir les informations",
+    //         content: new OA\MediaType(
+    //             mediaType: "application/json",
+    //             schema: new OA\Schema(
+    //                 type: "object",
+    //                 required: ["username"],
+    //                 properties: [
+    //                     new OA\Property(
+    //                         property: "username",
+    //                         type: "string",
+    //                         example: "adresse@email.fr"
+    //                     )
+    //                 ]
+    //             )
+    //         )
+    //     ),
+    //     responses: [
+    //         new OA\Response(
+    //             response: 200,
+    //             description: "Tous les champs utilisateurs retournés",
+    //         )
+    //     ]
+    // )]
+
+    // public function me(): JsonResponse
+    // {
+    //     $user = $this->getUser();
+
+    //     $responseData = $this->serializer->serialize($user, 'json');
+
+    //     return new JsonResponse($responseData, Response::HTTP_OK, [], true);
+    // }
+
+    // #[Route('/account/edit', name: 'edit', methods: 'PUT')]
+    // #[OA\Put(
+    //     path: "/api/account/edit",
+    //     summary: "Modifier son compte utilisateur avec l'un ou tous les champs",
+    //     requestBody: new OA\RequestBody(
+    //         required: true,
+    //         description: "Nouvelles données éventuelles de l'utilisateur à mettre à jour",
+    //         content: new OA\MediaType(
+    //             mediaType: "application/json",
+    //             schema: new OA\Schema(
+    //                 type: "object",
+    //                 properties: [
+    //                     new OA\Property(
+    //                         property: "firstname",
+    //                         type: "string",
+    //                         example: "Nouveau Nom",
+    //                     )
+    //                 ]
+    //             )
+    //         )
+    //     ),
+    //     responses: [
+    //         new OA\Response(
+    //             response: 204,
+    //             description: "Utilisateur modifié avec succès"
+    //         )
+    //     ]
+    // )]
+    
+    // public function edit(Request $request): JsonResponse
+    // {
+    //     $user = $this->serializer->deserialize(
+    //         $request->getContent(),
+    //         User::class,
+    //         'json',
+    //         [AbstractNormalizer::OBJECT_TO_POPULATE => $this->getUser()],
+    //     );
+    //     $user->setUpdatedAt(new DateTimeImmutable());
+
+    //     if (isset($request->toArray()['password'])) {
+    //         $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
+    //     }
+
+    //     $this->manager->flush();
+
+    //     return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    // }
 }
